@@ -1,0 +1,5 @@
+runtime: custom
+tasks:
+  - name: install libtinfo6
+    apt: libtinfo6
+    local: true

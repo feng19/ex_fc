@@ -1,0 +1,43 @@
+ROSTemplateFormatVersion: '2015-09-01'
+Transform: 'Aliyun::Serverless-2018-04-03'
+Resources:
+  fc.feng19.com: # domain name
+    Type: 'Aliyun::Serverless::CustomDomain'
+    Properties:
+      Protocol: HTTP,HTTPS
+      CertConfig:
+        CertName: 'CertName'
+        PrivateKey: './certificates/privateKey.pem'
+        Certificate: './certificates/certificate.pem'
+      RouteConfig:
+        Routes:
+          '/*':
+            ServiceName: web
+            FunctionName: index
+  web:
+    Type: 'Aliyun::Serverless::Service'
+    Properties:
+      Description: web server
+      InternetAccess: true
+    index:
+      Type: 'Aliyun::Serverless::Function'
+      Properties:
+        Handler: index.handler
+        CodeUri: ./_build/prod/rel/ex_fc/
+        Runtime: custom
+        Timeout: 60
+        MemorySize: 512
+        InstanceConcurrency: 100
+        EnvironmentVariables: {}
+      Events:
+        http:
+          Type: HTTP
+          Properties:
+            AuthType: anonymous
+            Methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - HEAD
+              - PATCH
